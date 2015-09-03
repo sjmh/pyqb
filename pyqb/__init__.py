@@ -8,11 +8,14 @@ import requests
 import xmltodict
 from xml.etree import ElementTree as et
 
+
 class AuthenticateError(Exception):
     pass
 
+
 class ResponseError(Exception):
     pass
+
 
 class QBRequest():
     def __init__(self, request=None, ticket=None, encoding="UTF-8"):
@@ -48,8 +51,10 @@ class QBRequest():
             e = et.SubElement(body, f, attrib=v[1])
             e.text = v[0]
 
+
 class Client():
-    def __init__(self, username=None, password=None, url="http://www.quickbase.com", database=None):
+    def __init__(self, username=None, password=None,
+                 url="http://www.quickbase.com", database=None):
         """Creates a client and authenticate to the URL/db"""
         self.username = username
         self.password = password
@@ -84,14 +89,16 @@ class Client():
         errcode = int(errcode.text)
         if errcode != 0:
             errtext = parsed.find('errtext').text
-            raise ResponseError('Received err #{0} : {1}'.format(errcode, errtext))
+            raise ResponseError('Received err #{0} : {1}'.format(errcode,
+                                errtext))
         return parsed
 
     def __make_req(self, url=None, headers=None, request=None):
         res = requests.post(url, headers=headers, data=request.tostring())
         return res
 
-    def doquery(self, query=None, qid=None, qname=None, database=None, fields=None, fmt=False, rids=False):
+    def doquery(self, query=None, qid=None, qname=None, database=None,
+                fields=None, fmt=False, rids=False):
         req = {}
         if query is not None:
             req["query"] = query
@@ -129,7 +136,7 @@ class Client():
         req["rid"] = rid
 
         f = []
-        for k,v in fields.iteritems():
+        for k, v in fields.iteritems():
             try:
                 int(k)
                 f.append((v, {"fid": k}))
@@ -137,6 +144,22 @@ class Client():
                 f.append((v, {"name": k}))
         req["field"] = f
         res = self.__request('EditRecord', database, req)
+        return xmltodict.parse(et.tostring(res))['qdbapi']
+
+    def addrecord(self, database=None, fields=None):
+        req = {}
+        if database is None:
+            database = self.database
+
+        f = []
+        for k, v in fields.itermitems():
+            try:
+                int(k)
+                f.append((v, {"fid": k}))
+            except ValueError:
+                f.append((v, {"name": k}))
+        req["field"] = f
+        res = self.__request('AddRecord', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
     def getnumrecords(self, database=None):
