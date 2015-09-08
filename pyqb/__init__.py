@@ -73,9 +73,9 @@ class Client():
 
     def __request(self, action=None, db="main", request=None):
         headers = {
-                "Content-Type": "application/xml",
-                "Accept-Charset": "utf-8",
-                "QUICKBASE-ACTION": "API_" + action
+            "Content-Type": "application/xml",
+            "Accept-Charset": "utf-8",
+            "QUICKBASE-ACTION": "API_" + action
         }
         url = self.url + "/db/" + db
         request = QBRequest(request, ticket=self.ticket)
@@ -132,7 +132,7 @@ class Client():
             req["update_id"] = update_id
 
         if rid is None:
-            raise RequestError("You must specify a record id to edit")
+            raise ResponseError("You must specify a record id to edit")
         req["rid"] = rid
 
         f = []
@@ -141,6 +141,7 @@ class Client():
                 int(k)
                 f.append((v, {"fid": k}))
             except ValueError:
+                k = k.replace(" ", "_")
                 f.append((v, {"name": k}))
         req["field"] = f
         res = self.__request('EditRecord', database, req)
