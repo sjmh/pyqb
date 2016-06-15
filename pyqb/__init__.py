@@ -7,6 +7,7 @@ see http://www.quickbase.com/api-guide/index.html
 import requests
 import xmltodict
 from xml.etree import ElementTree as et
+requests.packages.urllib3.disable_warnings()
 
 
 class AuthenticateError(Exception):
@@ -40,6 +41,11 @@ class QBRequest():
             e = et.SubElement(body, f)
             e.text = v
 
+        # Change ints to strings
+        if isinstance(v, int):
+            e = et.SubElement(body, f)
+            e.text = str(v)
+
         # 'fieldname': ['a','b','c']
         # 'fieldname': [('a', {'attr1': 'v1'})]
         if isinstance(v, list):
@@ -49,7 +55,7 @@ class QBRequest():
         # ('a', {'attr1': 'v1'})
         if isinstance(v, tuple):
             e = et.SubElement(body, f, attrib=v[1])
-            e.text = v[0]
+            e.text = str(v[0])
 
 
 class Client():
@@ -79,6 +85,7 @@ class Client():
         }
         url = self.url + "/db/" + db
         request = QBRequest(request, ticket=self.ticket)
+        print request.tostring()
         res = self.__make_req(url, headers, request)
         parsed = et.XML(res.text)
 
@@ -89,8 +96,7 @@ class Client():
         errcode = int(errcode.text)
         if errcode != 0:
             errtext = parsed.find('errtext').text
-            raise ResponseError('Received err #{0} : {1}'.format(errcode,
-                                errtext))
+            raise ResponseError('Received err #{0} : {1}'.format(errcode, errtext))
         return parsed
 
     def __make_req(self, url=None, headers=None, request=None):
@@ -111,10 +117,12 @@ class Client():
             database = self.database
 
         if fields is not None:
-            req["clist"] = fields.join(".")
+            fids = [str(x) for x in fields]
+            req["clist"] = ".".join(fids)
         else:
             req["clist"] = "a"
 
+        print req["clist"]
         if fmt:
             req["fmt"] = "structured"
 
@@ -137,6 +145,7 @@ class Client():
 
         f = []
         for k, v in fields.iteritems():
+            k = str(k)
             try:
                 int(k)
                 f.append((v, {"fid": k}))
