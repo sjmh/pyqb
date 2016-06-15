@@ -34,7 +34,7 @@ Usage
   # doquery(query=None, qid=None, qname=None, database=None, fields=None, fmt=False, rids=False):
   qbc.doquery(qid=64)
   qbc.doquery(query='{"6".EX."myval"}', database='asdfasdf')
-  qbc.doquery(qid=64, fields=["field1", "field2"], fmt=True, rids=False)
+  qbc.doquery(qid=64, fields=["3", "4"], fmt=True, rids=False)
 
 **EditRecord**
 

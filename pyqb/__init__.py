@@ -85,7 +85,6 @@ class Client():
         }
         url = self.url + "/db/" + db
         request = QBRequest(request, ticket=self.ticket)
-        print request.tostring()
         res = self.__make_req(url, headers, request)
         parsed = et.XML(res.text)
 
@@ -122,7 +121,6 @@ class Client():
         else:
             req["clist"] = "a"
 
-        print req["clist"]
         if fmt:
             req["fmt"] = "structured"
 
