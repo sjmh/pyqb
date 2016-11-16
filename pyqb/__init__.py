@@ -19,9 +19,14 @@ class ResponseError(Exception):
 
 
 class QBRequest():
-    def __init__(self, request=None, ticket=None, encoding="UTF-8"):
+    def __init__(self, request=None, ticket=None, user_token=None, encoding="UTF-8"):
         self.request = request
-        self.request["ticket"] = ticket
+        if ticket:
+            self.request["ticket"] = ticket
+        elif user_token:
+            self.request["usertoken"] = user_token
+        else:
+            return None
         self.request["encoding"] = encoding
         self.body = ""
 
@@ -59,23 +64,27 @@ class QBRequest():
 
 
 class Client():
-    def __init__(self, username=None, password=None,
-                 url="http://www.quickbase.com", database=None):
+    def __init__(self, url="http://www.quickbase.com", database=None,
+                 proxy=None, user_token=None):
         """Creates a client and authenticate to the URL/db"""
-        self.username = username
-        self.password = password
+        self.user_token = user_token
         self.url = url
         self.database = database
         self.ticket = None
-        self.__authenticate()
+        if proxy:
+            self.proxy = {
+                'http': proxy,
+                'https': proxy
+            }
+        else:
+            self.proxy = None
 
-        if self.ticket is None:
-            raise AuthenticateError("Failed to authenticate")
-
-    def __authenticate(self):
-        req = {"username": self.username, "password": self.password}
+    def authenticate(self, username, password):
+        req = {"username": username, "password": password}
         res = self.__request("Authenticate", request=req)
         self.ticket = res.find("ticket").text
+        if not self.ticket:
+            raise AuthenticateError("Failed to authenticate")
 
     def __request(self, action=None, db="main", request=None):
         headers = {
@@ -84,7 +93,10 @@ class Client():
             "QUICKBASE-ACTION": "API_" + action
         }
         url = self.url + "/db/" + db
-        request = QBRequest(request, ticket=self.ticket)
+        if self.ticket:
+            request = QBRequest(request, ticket=self.ticket)
+        elif self.user_token:
+            request = QBRequest(request, user_token=self.user_token)
         res = self.__make_req(url, headers, request)
         parsed = et.XML(res.text)
 
@@ -99,7 +111,7 @@ class Client():
         return parsed
 
     def __make_req(self, url=None, headers=None, request=None):
-        res = requests.post(url, headers=headers, data=request.tostring())
+        res = requests.post(url, headers=headers, data=request.tostring(), proxies=self.proxy)
         return res
 
     def doquery(self, query=None, qid=None, qname=None, database=None,
@@ -129,8 +141,10 @@ class Client():
         res = self.__request('DoQuery', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
-    def editrecord(self, rid=None, database=None, fields=None, update_id=None):
-        req = {}
+    def editrecord(self, rid=None, database=None, fields=None, update_id=None, ms_in_utc=False):
+        req = {
+            "msInUTC": ms_in_utc
+        }
         if database is None:
             database = self.database
 

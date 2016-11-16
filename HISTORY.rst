@@ -3,6 +3,12 @@
 Release History
 ---------------
 
+0.2.0 (2016-11-15)
+++++++++++++++++++
+
+- Added ability to use user_tokens instead of authentication
+- Must authenticate via authenticate function now instead of assuming init will do it for you
+
 0.1.3 (2015-09-08)
 ++++++++++++++++++
 
