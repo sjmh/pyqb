@@ -25,8 +25,6 @@ class QBRequest():
             self.request["ticket"] = ticket
         elif user_token:
             self.request["usertoken"] = user_token
-        else:
-            return None
         self.request["encoding"] = encoding
         self.body = ""
 
@@ -97,6 +95,8 @@ class Client():
             request = QBRequest(request, ticket=self.ticket)
         elif self.user_token:
             request = QBRequest(request, user_token=self.user_token)
+        else:
+            request = QBRequest(request)
         res = self.__make_req(url, headers, request)
         parsed = et.XML(res.text)
 
@@ -111,6 +111,7 @@ class Client():
         return parsed
 
     def __make_req(self, url=None, headers=None, request=None):
+        print request
         res = requests.post(url, headers=headers, data=request.tostring(), proxies=self.proxy)
         return res
 
