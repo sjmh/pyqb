@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='pyqb',
-      version='0.2.1',
+      version='0.2.2',
       description='Quickbase API Python Wrapper',
       url='http://github.com/sjmh/pyqb',
       author='Steven Hajducko',
@@ -16,12 +16,14 @@ setup(name='pyqb',
                   'Topic :: Software Development :: Libraries',
                   'Programming Language :: Python :: 2',
                   'Programming Language :: Python :: 2.6',
-                  'Programming Language :: Python :: 2.7'
+                  'Programming Language :: Python :: 2.7',
+                  'Programming Language :: Python :: 3'
       ],
       keyworks=['quickbase'],
       packages=['pyqb'],
       install_requires=[
           'xmltodict',
-          'requests'
+          'requests',
+          'six'
       ],
       zip_safe=False)
