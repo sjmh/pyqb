@@ -176,7 +176,7 @@ class Client():
             database = self.database
 
         f = []
-        for k, v in fields.itermitems():
+        for k, v in fields.items():
             try:
                 int(k)
                 f.append((v, {"fid": k}))
