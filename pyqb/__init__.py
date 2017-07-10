@@ -6,7 +6,7 @@ see http://www.quickbase.com/api-guide/index.html
 
 import requests
 import xmltodict
-from six import string_types
+import six
 from xml.etree import ElementTree as et
 requests.packages.urllib3.disable_warnings()
 
@@ -35,13 +35,13 @@ class QBRequest():
 
     def __format_request(self, request=None):
         body = et.Element('qdbapi')
-        for f, v in request.items():
+        for f, v in six.iteritems(request):
             self.__add_element(body, f, v)
         return et.tostring(body)
 
     def __add_element(self, body, f, v):
         # 'fieldname': 'value'
-        if isinstance(v, string_types):
+        if isinstance(v, six.string_types):
             e = et.SubElement(body, f)
             e.text = v
 
@@ -158,7 +158,7 @@ class Client():
         req["rid"] = rid
 
         f = []
-        for k, v in fields.items():
+        for k, v in six.iteritems(fields):
             k = str(k)
             try:
                 int(k)
@@ -176,7 +176,7 @@ class Client():
             database = self.database
 
         f = []
-        for k, v in fields.items():
+        for k, v in six.iteritems(fields):
             try:
                 int(k)
                 f.append((v, {"fid": k}))
