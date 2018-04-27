@@ -24,8 +24,10 @@ Usage
 .. code-block:: python
 
   import pyqb
-  # def Client(username=None, password=None, url="http://www.quickbase.com", database=None):
-  qbc = pyqb.Client(username='myusername', password='mypassword')
+  # def Client(url="http://www.quickbase.com", database=None, proxy=None, user_token=None):
+  qbc = pyqb.Client(url='http://my_domain.quickbase.com')
+  # Below authenticate is not required if `user_token` argument is passed to pyqb.Client() above
+  qbc.authenticate(username='myusername', password='mypassword')
 
 **DoQuery**
 
