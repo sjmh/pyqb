@@ -112,7 +112,6 @@ class Client():
         return parsed
 
     def __make_req(self, url=None, headers=None, request=None):
-        print request
         res = requests.post(url, headers=headers, data=request.tostring(), proxies=self.proxy)
         return res
 
