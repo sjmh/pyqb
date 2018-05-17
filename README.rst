@@ -54,13 +54,22 @@ Usage
   f = { "hostname": "myhost", "7": "1.2.3.4" }
   res = qbc.addrecord(database='asdfasdf', fields=f)
 
+**DeleteRecord**
+
+.. code-block:: python
+
+  # deleterecord(rid=None, database=None)
+  res = qbc.deleterecord(rid='18081', database='asdfasdf')
+
 API Support
 +++++++++++++
 - DoQuery
 - EditRecod
 - GetNumRecords
 - AddField
+- DeleteRecord
 
 Authors
 +++++++++++++
 Steven Hajducko (steven_hajducko@intuit.com)
+George Matthew (George.Matthew@umassmed.edu)
