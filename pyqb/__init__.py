@@ -191,3 +191,15 @@ class Client():
             database = self.database
         res = self.__request('GetNumRecords', database, {})
         return res.find('num_records').text
+
+    def deleterecord(self, rid=None, database=None):
+        req = {}
+        if database is None:
+            database = self.database
+
+        if rid is None:
+            raise ResponseError("You must specify a record id to delete")
+        req["rid"] = rid
+
+        res = self.__request('DeleteRecord', database, req)
+        return xmltodict.parse(et.tostring(res))['qdbapi']
