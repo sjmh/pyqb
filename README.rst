@@ -33,7 +33,7 @@ Usage
 
 .. code-block:: python
 
-  # doquery(query=None, qid=None, qname=None, database=None, fields=None, fmt=False, rids=False):
+  # doquery(query=None, qid=None, qname=None, database=None, fields=None, fmt=False, rids=False, sort_fields=None, options=False):
   qbc.doquery(qid=64)
   qbc.doquery(query='{"6".EX."myval"}', database='asdfasdf')
   qbc.doquery(qid=64, fields=["3", "4"], fmt=True, rids=False)
