@@ -116,7 +116,7 @@ class Client():
         return res
 
     def doquery(self, query=None, qid=None, qname=None, database=None,
-                fields=None, sort_fields=None, fmt=False, options=False, rids=False):
+                fields=None, fmt=False, rids=False, sort_fields=None, options=False):
         req = {}
         if query is not None:
             req["query"] = query
@@ -134,18 +134,18 @@ class Client():
         else:
             req["clist"] = "a"
 
+        if fmt:
+            req["fmt"] = "structured"
+
+        if rids:
+            req["includeRids"] = 1
+
         if sort_fields is not None:
             sids = [str(x) for x in sort_fields]
             req["slist"] = ".".join(sids)
 
-        if fmt:
-            req["fmt"] = "structured"
-
         if options:
             req["options"] = options
-
-        if rids:
-            req["includeRids"] = 1
         res = self.__request('DoQuery', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
