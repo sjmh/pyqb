@@ -209,3 +209,24 @@ class Client():
 
         res = self.__request('DeleteRecord', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
+
+    def importfromcsv(self, recordscsv=None, database=None, clist=None, skipfirst=None, decimalpercent=None):
+        req = {}
+        if database is None:
+            database = self.database
+
+        if recordscsv is None:
+            raise ResponseError("You must specify a records csv to import")
+        req["records_csv"] = recordscsv
+
+        if clist is not None:
+            req["clist"] = clist
+
+        if skipfirst is True:
+            req["skipfirst"] = 1
+
+        if decimalpercent is True:
+            req["decimalPercent"] = 1
+
+        res = self.__request('ImportFromCSV', database, req)
+        return xmltodict.parse(et.tostring(res))['qdbapi']
