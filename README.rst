@@ -71,5 +71,5 @@ API Support
 
 Authors
 +++++++++++++
-Steven Hajducko (steven_hajducko@intuit.com)
-George Matthew (George.Matthew@umassmed.edu)
+- Steven Hajducko (steven_hajducko@intuit.com)
+- George Matthew (George.Matthew@umassmed.edu)
