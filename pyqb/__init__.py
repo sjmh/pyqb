@@ -176,8 +176,10 @@ class Client():
         res = self.__request('EditRecord', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
-    def addrecord(self, database=None, fields=None):
-        req = {}
+    def addrecord(self, database=None, fields=None, ms_in_utc=False):
+        req = {
+            "msInUTC": ms_in_utc
+        }
         if database is None:
             database = self.database
 
