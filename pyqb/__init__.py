@@ -232,3 +232,17 @@ class Client():
 
         res = self.__request('ImportFromCSV', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
+
+    def get_schema(self, database=None):
+        req = {}
+        if database is None:
+            database = self.database
+
+        res = self.__request('GetSchema', database, req)
+        return xmltodict.parse(et.tostring(res))['qdbapi']
+
+    def granted_dbs(self):
+        req = {}
+
+        res = self.__request('GrantedDBs', 'main', req)
+        return xmltodict.parse(et.tostring(res))['qdbapi']
