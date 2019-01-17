@@ -200,6 +200,17 @@ class Client():
         res = self.__request('GetNumRecords', database, {})
         return res.find('num_records').text
 
+    def doquerycount(self, query=None, database=None):
+        req = {}
+        if database is None:
+            database = self.database
+
+        if query is not None:
+            req["query"] = query
+
+        res = self.__request('DoQueryCount', database, req)
+        return res.find('numMatches').text
+
     def deleterecord(self, rid=None, database=None):
         req = {}
         if database is None:
