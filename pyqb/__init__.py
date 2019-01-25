@@ -210,6 +210,23 @@ class Client():
         res = self.__request('DeleteRecord', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
+    # Delete multiple records based on a queryid or table
+    def purgerecords(self, query=None, qid=None, database=None):
+        req = {}
+        if database is None:
+            database = self.database
+
+        if query is not None:
+            req["query"] = query
+        elif qid is not None:
+            req["qid"] = str(qid)
+
+        if query is None and qid is None:
+            raise ResponseError("You must specify a query or qid to delete")
+
+        res = self.__request('PurgeRecords', database, req)
+        return xmltodict.parse(et.tostring(res))['qdbapi']
+
     def importfromcsv(self, recordscsv=None, database=None, clist=None, skipfirst=None, decimalpercent=None):
         req = {}
         if database is None:
