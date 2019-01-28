@@ -244,6 +244,21 @@ class Client():
         res = self.__request('ImportFromCSV', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
+    def purge_records(self, query=None, qid=None, qname=None, database=None):
+        req = {}
+        if query is not None:
+            req["query"] = query
+        elif qid is not None:
+            req["qid"] = str(qid)
+        elif qname is not None:
+            req["qname"] = qname
+
+        if database is None:
+            database = self.database
+
+        res = self.__request('PurgeRecords', database, req)
+        return xmltodict.parse(et.tostring(res))['qdbapi']
+
     def get_schema(self, database=None):
         req = {}
         if database is None:
