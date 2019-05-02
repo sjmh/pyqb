@@ -223,7 +223,7 @@ class Client():
         res = self.__request('DeleteRecord', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
-    def importfromcsv(self, recordscsv=None, database=None, clist=None, skipfirst=None, decimalpercent=None):
+    def importfromcsv(self, recordscsv=None, database=None, clist=None, skipfirst=None, decimalpercent=None, mergeFieldId=None):
         req = {}
         if database is None:
             database = self.database
@@ -237,6 +237,9 @@ class Client():
 
         if skipfirst is True:
             req["skipfirst"] = 1
+            
+        if mergeFieldId is not None:
+            req["mergeFieldId"] = mergeFieldId
 
         if decimalpercent is True:
             req["decimalPercent"] = 1
