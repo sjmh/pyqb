@@ -64,12 +64,13 @@ class QBRequest():
 
 class Client():
     def __init__(self, url="http://www.quickbase.com", database=None,
-                 proxy=None, user_token=None):
+                 proxy=None, user_token=None, session=None):
         """Creates a client and authenticate to the URL/db"""
         self.user_token = user_token
         self.url = url
         self.database = database
         self.ticket = None
+        self.session = session or requests.Session()
         if proxy:
             self.proxy = {
                 'http': proxy,
@@ -112,7 +113,7 @@ class Client():
         return parsed
 
     def __make_req(self, url=None, headers=None, request=None):
-        res = requests.post(url, headers=headers, data=request.tostring(), proxies=self.proxy)
+        res = self.session.post(url, headers=headers, data=request.tostring(), proxies=self.proxy)
         return res
 
     def doquery(self, query=None, qid=None, qname=None, database=None,
