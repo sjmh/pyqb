@@ -64,12 +64,13 @@ class QBRequest():
 
 class Client():
     def __init__(self, url="http://www.quickbase.com", database=None,
-                 proxy=None, user_token=None):
+                 proxy=None, user_token=None, session=None):
         """Creates a client and authenticate to the URL/db"""
         self.user_token = user_token
         self.url = url
         self.database = database
         self.ticket = None
+        self.session = session or requests.Session()
         if proxy:
             self.proxy = {
                 'http': proxy,
@@ -112,7 +113,7 @@ class Client():
         return parsed
 
     def __make_req(self, url=None, headers=None, request=None):
-        res = requests.post(url, headers=headers, data=request.tostring(), proxies=self.proxy)
+        res = self.session.post(url, headers=headers, data=request.tostring(), proxies=self.proxy)
         return res
 
     def doquery(self, query=None, qid=None, qname=None, database=None,
@@ -221,6 +222,23 @@ class Client():
         req["rid"] = rid
 
         res = self.__request('DeleteRecord', database, req)
+        return xmltodict.parse(et.tostring(res))['qdbapi']
+
+    # Delete multiple records based on a queryid or table
+    def purgerecords(self, query=None, qid=None, database=None):
+        req = {}
+        if database is None:
+            database = self.database
+
+        if query is not None:
+            req["query"] = query
+        elif qid is not None:
+            req["qid"] = str(qid)
+
+        if query is None and qid is None:
+            raise ResponseError("You must specify a query or qid to delete")
+
+        res = self.__request('PurgeRecords', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
     def importfromcsv(self, recordscsv=None, database=None, clist=None, skipfirst=None, decimalpercent=None, mergeFieldId=None):
