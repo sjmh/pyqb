@@ -64,7 +64,7 @@ Usage
 API Support
 +++++++++++++
 - DoQuery
-- EditRecod
+- EditRecord
 - GetNumRecords
 - AddField
 - DeleteRecord
