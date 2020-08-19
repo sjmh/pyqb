@@ -181,8 +181,10 @@ class Client():
         res = self.__request('EditRecord', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
-    def addrecord(self, database=None, fields=None):
-        req = {}
+    def addrecord(self, database=None, fields=None, ms_in_utc=False):
+        req = {
+            "msInUTC": ms_in_utc
+        }
         if database is None:
             database = self.database
 
@@ -202,6 +204,17 @@ class Client():
             database = self.database
         res = self.__request('GetNumRecords', database, {})
         return res.find('num_records').text
+
+    def doquerycount(self, query=None, database=None):
+        req = {}
+        if database is None:
+            database = self.database
+
+        if query is not None:
+            req["query"] = query
+
+        res = self.__request('DoQueryCount', database, req)
+        return res.find('numMatches').text
 
     def deleterecord(self, rid=None, database=None):
         req = {}
@@ -232,7 +245,7 @@ class Client():
         res = self.__request('PurgeRecords', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
-    def importfromcsv(self, recordscsv=None, database=None, clist=None, skipfirst=None, decimalpercent=None):
+    def importfromcsv(self, recordscsv=None, database=None, clist=None, skipfirst=None, decimalpercent=None, mergeFieldId=None):
         req = {}
         if database is None:
             database = self.database
@@ -246,11 +259,29 @@ class Client():
 
         if skipfirst is True:
             req["skipfirst"] = 1
+            
+        if mergeFieldId is not None:
+            req["mergeFieldId"] = mergeFieldId
 
         if decimalpercent is True:
             req["decimalPercent"] = 1
 
         res = self.__request('ImportFromCSV', database, req)
+        return xmltodict.parse(et.tostring(res))['qdbapi']
+
+    def purge_records(self, query=None, qid=None, qname=None, database=None):
+        req = {}
+        if query is not None:
+            req["query"] = query
+        elif qid is not None:
+            req["qid"] = str(qid)
+        elif qname is not None:
+            req["qname"] = qname
+
+        if database is None:
+            database = self.database
+
+        res = self.__request('PurgeRecords', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
     def get_schema(self, database=None):
