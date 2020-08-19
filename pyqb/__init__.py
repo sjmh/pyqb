@@ -117,7 +117,7 @@ class Client():
         return res
 
     def doquery(self, query=None, qid=None, qname=None, database=None,
-                fields=None, fmt=False, rids=False, sort_fields=None, options=False):
+                fields=None, fmt=False, rids=False, sort_fields=None, options=False, fids=False):
         req = {}
         if query is not None:
             req["query"] = query
@@ -147,6 +147,10 @@ class Client():
 
         if options:
             req["options"] = options
+            
+        if fids:
+            req["useFids"] = 1
+            
         res = self.__request('DoQuery', database, req)
         return xmltodict.parse(et.tostring(res))['qdbapi']
 
