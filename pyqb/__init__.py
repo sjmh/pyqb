@@ -43,7 +43,10 @@ class QBRequest():
         # 'fieldname': 'value'
         if isinstance(v, six.string_types):
             e = et.SubElement(body, f)
-            e.text = v
+            if f in ['query', 'records_csv']:
+                e.append(et.Comment('--><![CDATA[' + v + ']]><!--'))
+            else:
+                e.text = v
 
         # Change ints to strings
         if isinstance(v, int):
